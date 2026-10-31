@@ -1,7 +1,15 @@
-﻿.vs/
-**/bin/
-**/obj/
+# Visual Studio
+.vs/
 *.user
 *.suo
+
+# Build outputs
+**/bin/
+**/obj/
+
+# Environment files
 .env
 .env.*
+
+# IDE
+.idea/
