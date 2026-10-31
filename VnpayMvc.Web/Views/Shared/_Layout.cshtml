@@ -1,47 +1,90 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+    string NavActive(string controller, string? action = null) =>
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)
+        && (action == null || string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase))
+            ? "active" : "";
+}
+<!DOCTYPE html>
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - VnpayMvc.Web</title>
-    <script type="importmap"></script>
+    <title>@(ViewData["Title"] is string t && t.Length > 0 ? $"{t} | DemoStore" : "DemoStore")</title>
+    <meta name="description" content="DemoStore – website demo tích hợp thanh toán VNPAY Sandbox trên ASP.NET Core MVC." />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" />
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/VnpayMvc.Web.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">VnpayMvc.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+    <a class="visually-hidden-focusable position-absolute top-0 start-0 p-2 bg-white" href="#main">Bỏ qua menu</a>
+
+    <div class="sandbox-bar">
+        <div class="container">
+            <strong>Môi trường thử nghiệm VNPAY Sandbox.</strong>
+            Mọi giao dịch trên website đều là giả lập, không trừ tiền thật.
+        </div>
+    </div>
+
+    <header class="site-header">
+        <nav class="navbar navbar-expand-md" aria-label="Điều hướng chính">
+            <div class="container">
+                <a class="brand" asp-controller="Home" asp-action="Index">
+                    <partial name="_BrandMark" />
+                    <span>DemoStore</span>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                        aria-controls="mainNav" aria-expanded="false" aria-label="Mở menu">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav site-nav ms-md-auto gap-md-1 pt-3 pt-md-0">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link @NavActive("Home", "Index")" asp-controller="Home" asp-action="Index">Trang chủ</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            @* Khi ProductsController đã có (việc Ch.3 #4), thay thẻ span này bằng:
+                               <a class="nav-link @NavActive("Products")" asp-controller="Products" asp-action="Index">Sản phẩm</a> *@
+                            <span class="nav-link disabled" aria-disabled="true">Sản phẩm<span class="nav-soon">Sắp có</span></span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @NavActive("Home", "UiKit")" asp-controller="Home" asp-action="UiKit">Quy chuẩn giao diện</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
+    <main id="main" class="site-main" role="main">
         <div class="container">
-            &copy; 2026 - VnpayMvc.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <partial name="_Alerts" />
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container d-flex flex-column flex-md-row justify-content-between gap-2">
+            <div>
+                <strong class="text-body">DemoStore</strong> &copy; @(DateTime.Now.Year).
+                Đồ án học phần Phát triển ứng dụng Thương mại điện tử.
+            </div>
+            <div class="d-flex gap-3">
+                <a asp-controller="Home" asp-action="UiKit">Quy chuẩn giao diện</a>
+                <a href="https://github.com/KienNguyen1504/VNPAY-ASP.NET-Core-MVC" target="_blank" rel="noopener">Mã nguồn trên GitHub</a>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

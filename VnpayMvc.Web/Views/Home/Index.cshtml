@@ -1,8 +1,94 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Trang chủ";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+            <h1>Mua hàng và thanh toán thử qua VNPAY Sandbox.</h1>
+            <p class="hero-lead">
+                DemoStore là cửa hàng mẫu để kiểm tra trọn vẹn một lần thanh toán: tạo đơn, chuyển sang VNPAY,
+                rồi chờ máy chủ xác minh kết quả trước khi báo đã thanh toán.
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+                @* Khi trang sản phẩm đã có (việc Ch.3 #4), thêm nút chính đứng trước:
+                   <a class="btn btn-primary btn-lg" asp-controller="Products" asp-action="Index">Xem sản phẩm</a>
+                   và đổi nút dưới thành btn-outline-primary. *@
+                <a class="btn btn-primary btn-lg" href="#quy-trinh">Xem quy trình thanh toán</a>
+                <a class="btn btn-outline-primary btn-lg" asp-controller="Home" asp-action="UiKit">Quy chuẩn giao diện</a>
+            </div>
+            <p class="ds-note mt-3 mb-0">Trang sản phẩm đang được xây dựng.</p>
+        </div>
+
+        <div class="col-lg-6">
+            @* Biên lai minh họa giao diện trang kết quả. Dữ liệu dưới đây là ví dụ, không lấy từ database. *@
+            <article class="receipt" aria-label="Ví dụ một đơn hàng đang chờ xác nhận">
+                <div class="receipt-head">
+                    <div>
+                        <p class="receipt-kicker">Đơn hàng mẫu</p>
+                        <p class="receipt-code ds-code">DS-20261101-0001</p>
+                    </div>
+                    <partial name="_PaymentStatus" model="@("Pending")" />
+                </div>
+
+                <dl class="summary">
+                    <div><dt>Tai nghe không dây × 1</dt><dd class="ds-money">@(450000m.ToVnd())</dd></div>
+                    <div><dt>Phí vận chuyển</dt><dd class="ds-money">@(0m.ToVnd())</dd></div>
+                    <div class="summary-total"><dt>Tổng thanh toán</dt><dd class="ds-money">@(450000m.ToVnd())</dd></div>
+                </dl>
+
+                <ol class="timeline" aria-label="Tiến trình đơn hàng">
+                    <li class="is-done">Đã tạo đơn<small>Giá được tính lại tại máy chủ</small></li>
+                    <li class="is-done">Đã chuyển sang VNPAY Sandbox<small>URL thanh toán có chữ ký</small></li>
+                    <li class="is-current">Chờ VNPAY xác nhận<small>Cập nhật khi nhận được IPN hợp lệ</small></li>
+                    <li class="is-todo">Hoàn tất đơn hàng</li>
+                </ol>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="quy-trinh">
+    <div class="section-title">
+        <h2>Một lần thanh toán gồm 4 bước</h2>
+        <p>Người mua chỉ thấy bước 1 đến 3. Bước 4 chạy giữa máy chủ DemoStore và VNPAY.</p>
+    </div>
+    <ol class="flow">
+        <li>
+            <h3>Chọn sản phẩm</h3>
+            <p>Danh sách sản phẩm và giá được đọc từ cơ sở dữ liệu.</p>
+        </li>
+        <li>
+            <h3>Xác nhận đơn</h3>
+            <p>Máy chủ tự tính tổng tiền và tạo mã đơn, không tin số tiền gửi từ trình duyệt.</p>
+        </li>
+        <li>
+            <h3>Thanh toán trên VNPAY</h3>
+            <p>Người mua được chuyển sang trang VNPAY Sandbox để nhập thông tin thẻ thử.</p>
+        </li>
+        <li>
+            <h3>Xác minh kết quả</h3>
+            <p>Đơn chỉ chuyển sang đã thanh toán khi chữ ký, mã đơn và số tiền đều khớp.</p>
+        </li>
+    </ol>
+</section>
+
+<section class="section">
+    <div class="section-title">
+        <h2>Những điều website cam kết</h2>
+    </div>
+    <dl class="facts">
+        <div>
+            <dt>Không thu tiền thật</dt>
+            <dd>Toàn bộ giao dịch đi qua môi trường Sandbox của VNPAY, chỉ dùng thẻ thử nghiệm.</dd>
+        </div>
+        <div>
+            <dt>Trạng thái lấy từ máy chủ</dt>
+            <dd>Trang kết quả đọc trạng thái trong cơ sở dữ liệu, không dựa vào tham số trên đường dẫn.</dd>
+        </div>
+        <div>
+            <dt>Không ghi nhận trùng</dt>
+            <dd>Cùng một thông báo từ VNPAY gửi lại nhiều lần chỉ được xử lý một lần.</dd>
+        </div>
+    </dl>
+</section>
