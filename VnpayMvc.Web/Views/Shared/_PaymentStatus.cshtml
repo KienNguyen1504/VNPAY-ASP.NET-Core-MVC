@@ -1,0 +1,16 @@
+@model string
+@*
+    Nhãn trạng thái thanh toán dùng chung.
+    Cách dùng (trạng thái PHẢI lấy từ database, không lấy từ query string):
+        <partial name="_PaymentStatus" model="@Model.Status.ToString()" />
+    Luôn truyền một chuỗi (không truyền null). Giá trị nhận: "Pending" | "Success"/"Paid" | "Failed"/"Cancelled" (không phân biệt hoa thường).
+*@
+@{
+    var (css, text) = (Model ?? "").Trim().ToLowerInvariant() switch
+    {
+        "success" or "paid" => ("status-success", "Thanh toán thành công"),
+        "failed" or "cancelled" or "canceled" => ("status-failed", "Thanh toán thất bại"),
+        _ => ("status-pending", "Đang chờ xác nhận")
+    };
+}
+<span class="status @css">@text</span>

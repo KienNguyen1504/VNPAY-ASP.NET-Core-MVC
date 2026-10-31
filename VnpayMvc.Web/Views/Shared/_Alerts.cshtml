@@ -1,0 +1,30 @@
+@*
+    Hiển thị thông báo một lần sau khi chuyển trang (đã gắn sẵn trong _Layout).
+    Trong Controller chỉ cần gán TempData rồi RedirectToAction:
+        TempData["Success"] = "Đã tạo đơn DS-20261101-0001.";
+        TempData["Error"]   = "Sản phẩm không tồn tại.";
+        TempData["Warning"] = "Đơn hàng đang chờ VNPAY xác nhận.";
+        TempData["Info"]    = "Bạn sẽ được chuyển sang VNPAY Sandbox.";
+*@
+@{
+    var kinds = new[]
+    {
+        (Key: "Success", Css: "alert-success", Icon: "M5 10.5l3 3 7-7"),
+        (Key: "Error",   Css: "alert-danger",  Icon: "M10 6v5M10 14h.01"),
+        (Key: "Warning", Css: "alert-warning", Icon: "M10 6v5M10 14h.01"),
+        (Key: "Info",    Css: "alert-info",    Icon: "M10 9v5M10 6h.01")
+    };
+}
+@foreach (var k in kinds)
+{
+    if (TempData[k.Key] is string message && !string.IsNullOrWhiteSpace(message))
+    {
+        <div class="alert @k.Css mb-4" role="@(k.Key == "Error" ? "alert" : "status")">
+            <svg class="alert-icon" viewBox="0 0 20 20" aria-hidden="true">
+                <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6" />
+                <path d="@k.Icon" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <div>@message</div>
+        </div>
+    }
+}
