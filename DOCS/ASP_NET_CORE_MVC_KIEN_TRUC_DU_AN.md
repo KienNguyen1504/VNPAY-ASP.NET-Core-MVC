@@ -407,7 +407,3 @@ Việc đối chiếu trực tiếp với bản mã nguồn cho thấy các côn
 4. Bootstrap. *Navbar – Bootstrap Documentation*. https://getbootstrap.com/docs/5.3/components/navbar/
 5. Bootstrap. *Grid System – Bootstrap Documentation*. https://getbootstrap.com/docs/5.3/layout/grid/
 6. Nhóm phát triển dự án. (2026). *VNPAY Payment Gateway Integration – ASP.NET Core MVC*. Bản mã nguồn `VNPAY-ASP.NET-Core-MVC-main.zip` và `README.md` cung cấp cho hoạt động phân tích.
-
----
-
-*Ghi chú nguồn: Các đường dẫn tương đối tại phần “Trích mã nguồn” được thiết kế cho trường hợp tài liệu Markdown nằm trong thư mục `DOCS/` ở gốc repository, giúp liên kết đến đúng file `VnpayMvc.Web/` tương ứng.*
