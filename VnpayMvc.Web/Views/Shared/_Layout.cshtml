@@ -52,9 +52,7 @@
                             <a class="nav-link @NavActive("Home", "Index")" asp-controller="Home" asp-action="Index">Trang chủ</a>
                         </li>
                         <li class="nav-item">
-                            @* Khi ProductsController đã có (việc Ch.3 #4), thay thẻ span này bằng:
-                               <a class="nav-link @NavActive("Products")" asp-controller="Products" asp-action="Index">Sản phẩm</a> *@
-                            <span class="nav-link disabled" aria-disabled="true">Sản phẩm<span class="nav-soon">Sắp có</span></span>
+                            <a class="nav-link @NavActive("Products")" asp-controller="Products" asp-action="Index">Sản phẩm</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link @NavActive("Home", "UiKit")" asp-controller="Home" asp-action="UiKit">Quy chuẩn giao diện</a>
