@@ -1,0 +1,57 @@
+@model IEnumerable<VnPayMvc.Web.Models.Product>
+@{
+    ViewData["Title"] = "Sản phẩm";
+}
+
+<section class="page-head">
+    <h1>Sản phẩm</h1>
+    <p>Chọn sản phẩm bạn muốn mua, nhấn <strong>Mua ngay</strong> để tạo đơn và thanh toán qua VNPAY.</p>
+</section>
+
+@if (!Model.Any())
+{
+    <div class="panel text-center py-5">
+        <p class="ds-muted mb-0">Hiện chưa có sản phẩm nào trong cửa hàng.</p>
+    </div>
+}
+else
+{
+    <div class="product-grid">
+        @foreach (var product in Model)
+        {
+            <div class="product-card panel">
+                <div class="product-img" aria-hidden="true">
+                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                    {
+                        <img src="@product.ImageUrl" alt="@product.Name" loading="lazy" />
+                    }
+                    else
+                    {
+                        <div class="product-img-placeholder">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                        </div>
+                    }
+                </div>
+
+                <div class="product-body">
+                    <h3 class="product-name">@product.Name</h3>
+                    @if (!string.IsNullOrEmpty(product.Description))
+                    {
+                        <p class="product-desc">@product.Description</p>
+                    }
+                    <span class="ds-money product-price">@product.Price.ToVnd()</span>
+                </div>
+
+                <div class="product-foot">
+                    <span class="product-stock ds-note">Còn @product.StockQuantity sản phẩm</span>
+                    <form asp-controller="Order" asp-action="CreateOrder" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@product.Id" />
+                        <input type="hidden" name="quantity" value="1" />
+                        <button type="submit" class="btn btn-primary w-100">Mua ngay</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+}
