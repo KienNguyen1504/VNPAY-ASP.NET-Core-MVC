@@ -11,8 +11,19 @@ namespace VnpayMvc.Web.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        /// <summary>
+        /// Trang quy chuẩn giao diện: màu, chữ, nút, trạng thái, thông báo.
+        /// ?demo=alerts để xem thử thông báo TempData sau khi chuyển trang.
+        /// </summary>
+        public IActionResult UiKit(string? demo)
         {
+            if (demo == "alerts")
+            {
+                TempData["Success"] = "Đã tạo đơn DS-20261101-0001.";
+                TempData["Warning"] = "Đơn hàng đang chờ VNPAY xác nhận.";
+                return RedirectToAction(nameof(UiKit));
+            }
+
             return View();
         }
 

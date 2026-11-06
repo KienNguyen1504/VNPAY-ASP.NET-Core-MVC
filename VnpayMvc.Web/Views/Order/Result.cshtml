@@ -1,0 +1,96 @@
+@model VnPayMvc.Web.Models.Order
+@*
+    Trang kết quả thanh toán.
+    ĐẶC BIỆT QUAN TRỌNG: Trạng thái hiển thị lấy TỪ DATABASE (Model.Status),
+    KHÔNG tự kết luận thành công / thất bại từ URL query string.
+    Controller phải load Order từ DB rồi truyền vào View.
+*@
+@{
+    ViewData["Title"] = "Kết quả thanh toán";
+
+    var statusText = Model.Status.ToString();
+
+    var (heading, description) = Model.Status switch
+    {
+        VnPayMvc.Web.Models.Enums.OrderStatus.Paid => (
+            "Thanh toán thành công!",
+            "Cổng VNPAY đã xác nhận giao dịch của bạn. Đơn hàng đang được xử lý."
+        ),
+        VnPayMvc.Web.Models.Enums.OrderStatus.Cancelled => (
+            "Thanh toán thất bại",
+            "Giao dịch không thành công hoặc đã bị huỷ. Bạn có thể thử lại."
+        ),
+        _ => (
+            "Đang chờ xác nhận",
+            "Đơn hàng đang chờ cổng VNPAY phản hồi. Trạng thái sẽ được cập nhật tự động khi ngân hàng xác nhận."
+        )
+    };
+}
+
+<div class="result-layout">
+    <div class="panel result-card text-center">
+        <div class="result-icon result-icon--@statusText.ToLowerInvariant()">
+            @if (Model.Status == VnPayMvc.Web.Models.Enums.OrderStatus.Paid)
+            {
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            }
+            else if (Model.Status == VnPayMvc.Web.Models.Enums.OrderStatus.Cancelled)
+            {
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+            }
+            else
+            {
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            }
+        </div>
+
+        <h1 class="result-heading">@heading</h1>
+        <p class="ds-muted">@description</p>
+
+        <div class="my-3">
+            <partial name="_PaymentStatus" model="@statusText" />
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2 class="h3 mb-3">Chi tiết đơn hàng</h2>
+
+        <div class="summary">
+            <div>
+                <dt>Mã đơn hàng</dt>
+                <dd class="ds-code">@Model.OrderCode</dd>
+            </div>
+            <div>
+                <dt>Sản phẩm</dt>
+                <dd>@Model.Product?.Name</dd>
+            </div>
+            <div>
+                <dt>Số lượng</dt>
+                <dd>@Model.Quantity</dd>
+            </div>
+            <div class="summary-total">
+                <dt>Tổng tiền</dt>
+                <dd class="ds-money">@Model.TotalAmount.ToVnd()</dd>
+            </div>
+            <div>
+                <dt>Thời gian tạo</dt>
+                <dd>@Model.CreatedAt.ToDisplayTime()</dd>
+            </div>
+        </div>
+    </div>
+
+    <div class="result-actions">
+        @if (Model.Status == VnPayMvc.Web.Models.Enums.OrderStatus.Pending)
+        {
+            <form asp-controller="Payment" asp-action="CreatePayment" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="orderId" value="@Model.Id" />
+                <button type="submit" class="btn btn-primary btn-lg btn-pay">
+                    Thử thanh toán lại
+                    <span class="btn-pay-amount">@Model.TotalAmount.ToVnd()</span>
+                </button>
+            </form>
+        }
+        <a asp-controller="Products" asp-action="Index" class="btn btn-outline-primary">Tiếp tục mua sắm</a>
+    </div>
+</div>

@@ -1,0 +1,147 @@
+@{
+    ViewData["Title"] = "Quy chuẩn giao diện";
+
+    var colors = new[]
+    {
+        (Name: "Chữ chính", Var: "--ds-ink", Hex: "#172033"),
+        (Name: "Chữ phụ", Var: "--ds-ink-2", Hex: "#4A5568"),
+        (Name: "Nền trang", Var: "--ds-paper", Hex: "#F4F5F8"),
+        (Name: "Đường viền", Var: "--ds-line", Hex: "#E2E5EB"),
+        (Name: "Màu chính", Var: "--ds-primary", Hex: "#2742C4"),
+        (Name: "Đang chờ", Var: "--ds-pending", Hex: "#8F5A00"),
+        (Name: "Thành công", Var: "--ds-success", Hex: "#16704A"),
+        (Name: "Thất bại", Var: "--ds-failed", Hex: "#B42318")
+    };
+}
+
+<div class="page-head">
+    <h1>Quy chuẩn giao diện</h1>
+    <p>Mọi trang của DemoStore dùng chung màu, chữ và thành phần dưới đây. Khi làm View mới, chép đúng class, không tự đặt màu riêng.</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <section class="kit-block">
+            <h2>Màu sắc</h2>
+            <p>Ba màu trạng thái chỉ dùng cho trạng thái đơn hàng và thông báo, không dùng để trang trí.</p>
+            <div class="swatches">
+                @foreach (var c in colors)
+                {
+                    <div class="swatch">
+                        <div class="swatch-color" style="background: var(@c.Var)"></div>
+                        <div class="swatch-info">
+                            <strong>@c.Name</strong>
+                            <code>@c.Var</code><br />
+                            <code>@c.Hex</code>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+
+        <section class="kit-block">
+            <h2>Chữ</h2>
+            <p>Font Be Vietnam Pro cho toàn bộ website, hiển thị tốt dấu tiếng Việt. Giá tiền và mã đơn dùng class <code>ds-money</code>, <code>ds-code</code> để chữ số thẳng cột.</p>
+            <div class="panel">
+                <div class="type-row"><span>Tiêu đề trang</span><div class="h1 m-0">Xác nhận đơn hàng</div></div>
+                <div class="type-row"><span>Tiêu đề mục</span><div class="h2 m-0">Thông tin thanh toán</div></div>
+                <div class="type-row"><span>Tiêu đề nhỏ</span><div class="h3 m-0">Sản phẩm đã chọn</div></div>
+                <div class="type-row"><span>Nội dung</span><div>Kiểm tra lại sản phẩm và tổng tiền trước khi chuyển sang VNPAY.</div></div>
+                <div class="type-row"><span>Chú thích</span><div class="ds-note">Thời gian tạo đơn: @(new DateTime(2026, 11, 1, 14, 5, 0).ToDisplayTime())</div></div>
+                <div class="type-row"><span>Giá, mã đơn</span><div><span class="ds-money">@(1250000m.ToVnd())</span> &nbsp; <span class="ds-code">DS-20261101-0001</span></div></div>
+            </div>
+        </section>
+
+        <section class="kit-block">
+            <h2>Nút bấm</h2>
+            <p>Mỗi màn hình chỉ có một nút chính. Chữ trên nút nói rõ việc sẽ xảy ra khi bấm.</p>
+            <div class="panel">
+                <div class="demo-row mb-3">
+                    <button type="button" class="btn btn-primary">Đặt hàng</button>
+                    <button type="button" class="btn btn-outline-primary">Xem chi tiết</button>
+                    <button type="button" class="btn btn-ghost">Quay lại</button>
+                    <button type="button" class="btn btn-outline-danger">Hủy đơn</button>
+                    <button type="button" class="btn btn-primary" disabled>Đang xử lý…</button>
+                </div>
+                <div style="max-width: 360px">
+                    <button type="button" class="btn btn-primary btn-lg btn-pay">
+                        Thanh toán qua VNPAY <span class="btn-pay-amount">@(450000m.ToVnd())</span>
+                    </button>
+                </div>
+<pre class="snippet">&lt;button class="btn btn-primary"&gt;Đặt hàng&lt;/button&gt;
+&lt;a class="btn btn-outline-primary" ...&gt;Xem chi tiết&lt;/a&gt;
+
+&lt;!-- Chỉ dùng ở trang xác nhận đơn --&gt;
+&lt;button class="btn btn-primary btn-lg btn-pay"&gt;
+    Thanh toán qua VNPAY &lt;span class="btn-pay-amount"&gt;@@Model.TotalAmount.ToVnd()&lt;/span&gt;
+&lt;/button&gt;</pre>
+            </div>
+        </section>
+
+        <section class="kit-block">
+            <h2>Trạng thái thanh toán</h2>
+            <p>Lấy trạng thái từ database rồi truyền vào partial. Không tự kết luận thành công từ tham số VNPAY trả về trên URL.</p>
+            <div class="panel">
+                <div class="demo-row">
+                    <partial name="_PaymentStatus" model="@("Pending")" />
+                    <partial name="_PaymentStatus" model="@("Success")" />
+                    <partial name="_PaymentStatus" model="@("Failed")" />
+                </div>
+<pre class="snippet">&lt;partial name="_PaymentStatus" model="@@Model.Status.ToString()" /&gt;
+Giá trị: "Pending" | "Success" | "Failed"</pre>
+            </div>
+        </section>
+
+        <section class="kit-block">
+            <h2>Thông báo</h2>
+            <p>Gán <code>TempData</code> trong Controller, layout tự hiển thị ở đầu trang sau khi chuyển trang. <a asp-action="UiKit" asp-route-demo="alerts">Xem thử</a>.</p>
+            <div class="panel">
+                <div class="alert alert-success" role="status">
+                    <svg class="alert-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6" /><path d="M5 10.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    <div><span class="alert-title">Thanh toán thành công</span>Đơn DS-20261101-0001 đã được VNPAY xác nhận.</div>
+                </div>
+                <div class="alert alert-warning" role="status">
+                    <svg class="alert-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6" /><path d="M10 6v5M10 14h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+                    <div><span class="alert-title">Đang chờ xác nhận</span>VNPAY chưa gửi kết quả. Trang sẽ cập nhật khi máy chủ nhận được thông báo hợp lệ.</div>
+                </div>
+                <div class="alert alert-danger" role="alert">
+                    <svg class="alert-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6" /><path d="M10 6v5M10 14h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+                    <div><span class="alert-title">Thanh toán thất bại</span>Giao dịch bị hủy trên VNPAY. Đơn hàng vẫn được giữ, bạn có thể thanh toán lại.</div>
+                </div>
+                <div class="alert alert-info mb-0" role="status">
+                    <svg class="alert-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.6" /><path d="M10 9v5M10 6h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+                    <div>Bạn sẽ được chuyển sang VNPAY Sandbox. Dùng thẻ thử nghiệm, không nhập thẻ thật.</div>
+                </div>
+<pre class="snippet">TempData["Success"] = "Đã tạo đơn " + order.OrderCode + ".";
+return RedirectToAction("Details", new { id = order.Id });
+// Khóa hỗ trợ: Success, Error, Warning, Info</pre>
+            </div>
+        </section>
+    </div>
+
+    <aside class="col-lg-4">
+        <div class="panel position-sticky" style="top: 6rem">
+            <h2 class="h3 mb-1">Mẫu tóm tắt đơn hàng</h2>
+            <p class="ds-note mb-3">Dùng cho trang xác nhận đơn và trang kết quả.</p>
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                <span class="ds-code">DS-20261101-0001</span>
+                <partial name="_PaymentStatus" model="@("Pending")" />
+            </div>
+            <dl class="summary mb-4">
+                <div><dt>Tai nghe không dây × 1</dt><dd class="ds-money">@(450000m.ToVnd())</dd></div>
+                <div><dt>Phí vận chuyển</dt><dd class="ds-money">@(0m.ToVnd())</dd></div>
+                <div class="summary-total"><dt>Tổng thanh toán</dt><dd class="ds-money">@(450000m.ToVnd())</dd></div>
+            </dl>
+
+            <form onsubmit="return false" novalidate>
+                <div class="mb-3">
+                    <label class="form-label" for="kitName">Họ tên người mua</label>
+                    <input class="form-control" id="kitName" placeholder="Nguyễn Văn A" />
+                </div>
+                <button type="submit" class="btn btn-primary btn-pay">
+                    Thanh toán qua VNPAY <span class="btn-pay-amount">@(450000m.ToVnd())</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+</div>

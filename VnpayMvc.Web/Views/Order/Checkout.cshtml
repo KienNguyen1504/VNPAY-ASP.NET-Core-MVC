@@ -1,0 +1,57 @@
+@model VnPayMvc.Web.Models.Order
+@{
+    ViewData["Title"] = "Xác nhận đơn hàng";
+}
+
+<section class="page-head">
+    <h1>Xác nhận đơn hàng</h1>
+    <p>Kiểm tra thông tin đơn hàng trước khi thanh toán qua VNPAY.</p>
+</section>
+
+<div class="checkout-layout">
+    <div class="panel">
+        <div class="checkout-head">
+            <span class="ds-note">Mã đơn hàng</span>
+            <span class="ds-code">@Model.OrderCode</span>
+        </div>
+
+        <div class="summary">
+            <div>
+                <dt>Sản phẩm</dt>
+                <dd>@Model.Product?.Name</dd>
+            </div>
+            <div>
+                <dt>Đơn giá</dt>
+                <dd class="ds-money">@(Model.Product?.Price.ToVnd() ?? "—")</dd>
+            </div>
+            <div>
+                <dt>Số lượng</dt>
+                <dd>@Model.Quantity</dd>
+            </div>
+            <div class="summary-total">
+                <dt>Tổng thanh toán</dt>
+                <dd class="ds-money">@Model.TotalAmount.ToVnd()</dd>
+            </div>
+        </div>
+    </div>
+
+    <div class="checkout-actions panel">
+        <p class="ds-note text-center mb-3">
+            Bạn sẽ được chuyển sang cổng thanh toán VNPAY Sandbox để hoàn tất.
+        </p>
+
+        @* Nút thanh toán gọi PaymentController.CreatePayment của Phương *@
+        <form asp-controller="Payment" asp-action="CreatePayment" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="orderId" value="@Model.Id" />
+            <button type="submit" class="btn btn-primary btn-lg btn-pay">
+                Thanh toán qua VNPAY
+                <span class="btn-pay-amount">@Model.TotalAmount.ToVnd()</span>
+            </button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a asp-controller="Products" asp-action="Index" class="btn btn-ghost btn-sm">Quay lại cửa hàng</a>
+        </div>
+    </div>
+</div>
