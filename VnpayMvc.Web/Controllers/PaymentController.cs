@@ -14,10 +14,7 @@ namespace VnpayMvc.Web.Controllers
         {
             // Chua xac nhan thanh toan.
             // Se bo sung kiem tra chu ky va don hang sau.
-            return Content(
-                "VNPAY Return URL da hoat dong. " +
-                "Dang cho xac minh thanh toan."
-            );
+         return View();
         }
     }
 }
