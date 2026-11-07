@@ -1,0 +1,45 @@
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Kết quả thanh toán VNPAY";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1" />
+    <title>Kết quả thanh toán VNPAY</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 50px 16px;
+            text-align: center;
+        }
+
+        .result {
+            max-width: 520px;
+            margin: auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px #00000012;
+        }
+
+        h2 { color: #174ea6; }
+        p { line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="result">
+        <h2>Kết quả thanh toán VNPAY</h2>
+        <p>@ViewData["Message"]</p>
+        <p>
+            Trạng thái thanh toán chính thức được
+            xác nhận bởi hệ thống qua IPN.
+        </p>
+    </div>
+</body>
+</html>
