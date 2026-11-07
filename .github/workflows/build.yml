@@ -1,0 +1,33 @@
+
+name: Build and Test ASP.NET Core .NET 8
+
+on:
+  push:
+    branches:
+      - feature/vnpay-return-url
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore web dependencies
+        run: dotnet restore ./VnPayMvc.Web.csproj
+
+      - name: Build web project
+        run: dotnet build ./VnPayMvc.Web.csproj --configuration Release --no-restore
+
+      - name: Restore test dependencies
+        run: dotnet restore ./Tests/VnPayReturn.Tests/VnPayReturn.Tests.csproj
+
+      - name: Run VNPAY Return tests
+        run: dotnet test ./Tests/VnPayReturn.Tests/VnPayReturn.Tests.csproj --configuration Release --no-restore
