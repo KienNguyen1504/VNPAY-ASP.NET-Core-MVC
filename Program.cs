@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using VnPayMvc.Web.Data;
+using VnPayMvc.Web.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllersWithViews();
+builder.Services.Configure<VnPayConfig>(
+    builder.Configuration.GetSection("VnPay"));
 
 var app = builder.Build();
 
