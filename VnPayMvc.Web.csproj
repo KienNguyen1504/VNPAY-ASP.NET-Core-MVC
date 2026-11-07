@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Compile Remove="VnpayMvc.Web/**/*.cs" />
+<Compile Remove="Tests/**/*.cs" />
     <Content Remove="VnpayMvc.Web/**" />
     <None Remove="VnpayMvc.Web/**" />
     <EmbeddedResource Remove="VnpayMvc.Web/**" />
