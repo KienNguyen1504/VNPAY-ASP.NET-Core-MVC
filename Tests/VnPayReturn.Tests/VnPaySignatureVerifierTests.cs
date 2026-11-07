@@ -18,8 +18,8 @@ public class VnPaySignatureVerifierTests
         var query = CreateSignedQuery(
             "ORDER001", "15000000");
 
-        bool result = VnPaySignatureVerifier.IsValid(
-            query, TestSecret);
+       bool result = VnPaySignatureVerifier.IsValid(
+    new QueryCollection(query), TestSecret);
 
         Assert.True(result);
     }
