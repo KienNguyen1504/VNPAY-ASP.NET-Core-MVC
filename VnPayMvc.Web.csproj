@@ -8,6 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+  <ItemGroup>
+    <Compile Remove="VnpayMvc.Web/**/*.cs" />
+    <Content Remove="VnpayMvc.Web/**" />
+    <None Remove="VnpayMvc.Web/**" />
+    <EmbeddedResource Remove="VnpayMvc.Web/**" />
+  </ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
