@@ -27,54 +27,64 @@ namespace VnPayMvc.Web.Controllers
             Location = ResponseCacheLocation.None,
             NoStore = true)]
         public async Task<IActionResult> Return()
-        {
-            // 1. Kiểm tra chữ ký VNPAY
-            if (!VnPaySignatureVerifier.IsValid(
-                    Request.Query, _config.HashSecret))
-            {
-                return Content("Chu ky VNPAY khong hop le.");
-            }
+       
+{
+    // 1. Kiểm tra chữ ký VNPAY
+    if (!VnPaySignatureVerifier.IsValid(
+            Request.Query, _config.HashSecret))
+    {
+        ViewData["Message"] = "Chữ ký VNPAY không hợp lệ.";
+        return View("Return");
+    }
 
-            // 2. Đọc thông tin giao dịch
-            string txnRef = Request.Query["vnp_TxnRef"].ToString();
-            string amountText = Request.Query["vnp_Amount"].ToString();
+    // 2. Đọc thông tin giao dịch
+    string txnRef = Request.Query["vnp_TxnRef"].ToString();
+    string amountText = Request.Query["vnp_Amount"].ToString();
 
-            if (string.IsNullOrWhiteSpace(txnRef) ||
-                !long.TryParse(amountText, out long amount) ||
-                amount <= 0)
-            {
-                return Content("Thong tin giao dich khong hop le.");
-            }
+    if (string.IsNullOrWhiteSpace(txnRef) ||
+        !long.TryParse(amountText, out long amount) ||
+        amount <= 0)
+    {
+        ViewData["Message"] = "Thông tin giao dịch không hợp lệ.";
+        return View("Return");
+    }
 
-            // 3. Tìm Payment và Order trong database
-            var payment = await _db.Payments
-                .AsNoTracking()
-                .Include(p => p.Order)
-                .FirstOrDefaultAsync(p => p.TxnRef == txnRef);
+    // 3. Tìm Payment và Order trong database
+    var payment = await _db.Payments
+        .AsNoTracking()
+        .Include(p => p.Order)
+        .FirstOrDefaultAsync(p => p.TxnRef == txnRef);
 
-            if (payment == null || payment.Order == null)
-            {
-                return Content("Khong tim thay giao dich.");
-            }
+    if (payment == null || payment.Order == null)
+    {
+        ViewData["Message"] = "Không tìm thấy giao dịch.";
+        return View("Return");
+    }
 
-            // 4. Đối chiếu số tiền (VNPAY nhân 100)
-            if (payment.Amount * 100m != amount ||
-                payment.Order.TotalAmount != payment.Amount)
-            {
-                return Content("So tien giao dich khong khop.");
-            }
+    // 4. Đối chiếu số tiền
+    if (payment.Amount * 100m != amount ||
+        payment.Order.TotalAmount != payment.Amount)
+    {
+        ViewData["Message"] = "Số tiền giao dịch không khớp.";
+        return View("Return");
+    }
 
-            // 5. Chỉ đọc trạng thái, KHÔNG cập nhật database
-            if (payment.Status ==
-                VnPayMvc.Web.Models.Enums.PaymentStatus.Pending)
-            {
-                return Content(
-                    "Da tiep nhan ket qua VNPAY. " +
-                    "Giao dich dang cho IPN xac nhan.");
-            }
+    // 5. Chỉ hiển thị trạng thái từ database
+    if (payment.Status ==
+        VnPayMvc.Web.Models.Enums.PaymentStatus.Pending)
+    {
+        ViewData["Message"] =
+            "Đã tiếp nhận kết quả VNPAY. " +
+            "Giao dịch đang chờ IPN xác nhận.";
 
-            return Content(
-                $"Trang thai thanh toan hien tai: {payment.Status}");
-        }
+        return View("Return");
+    }
+
+    ViewData["Message"] =
+        $"Trạng thái thanh toán hiện tại: {payment.Status}";
+
+    return View("Return");
+}
+
     }
 }
